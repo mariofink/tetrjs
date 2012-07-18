@@ -2,10 +2,11 @@
 	var stage = null;
 	var gameLayer = null;
 	var currentPiece = null;
+	var paused = false;
 	function init() {
 		setupStage();
-		var piece = tetrjs.piece.create();
-		gameLayer.add(piece);
+		currentPiece = tetrjs.piece.create();
+		gameLayer.add(currentPiece.group);
 		gameLayer.draw();
 		return true;
 	}
@@ -19,8 +20,11 @@
 		stage.add(createBoard());
 		stage.add(gameLayer);
 		stage.onFrame(function(frame) {
-			//gameLayer.setY(gameLayer.getY() + 2);
-			//gameLayer.draw();
+			if (paused === true) return;
+			if (currentPiece !== null) {
+				currentPiece.move();
+			}
+			gameLayer.draw();
 		});
 		stage.start();
 	}
@@ -38,13 +42,15 @@
 		layer.add(rect);
 		return layer;
 	}
-	function getGameLayer() {
-		return gameLayer;
-	}
 	
 	tetrjs.game = {
 		init: init,
-		getGameLayer: getGameLayer
+		pauseGame: function() {
+			paused = true;
+		},
+		resumeGame: function() {
+			paused = false;
+		}
 	}
 
 })(window.tetrjs = window.tetrjs || {});

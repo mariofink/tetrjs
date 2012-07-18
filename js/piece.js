@@ -1,8 +1,8 @@
 (function(tetrjs) {
 	var protoPiece = function(group) {
 		this.group = group;
-		this.check = function() {
-			console.log("piece!", this);
+		this.move = function() {
+			this.group.setY(this.group.getY()+1);
 		};
 	};
 	function create() {
@@ -19,8 +19,7 @@
 		});
 		group.add(rect);
 		var p = new protoPiece(group);
-		p.check();
-		return group;
+		return p;
 	}
 
 	tetrjs.piece = {
