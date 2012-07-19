@@ -1,9 +1,19 @@
 (function(tetrjs) {
 	var protoPiece = function(group) {
+		_self = this;
 		this.group = group;
 		this.move = function() {
+			if (collided() === true) return;
 			this.group.setY(this.group.getY()+1);
 		};
+		function collided() {
+			var position = _self.group.getPosition();
+			console.log(position.y, tetrjs.config.board.height);
+			if (position.y >= tetrjs.config.board.height) {
+				return true;
+			}
+			return false;
+		}
 	};
 	function create() {
 		var group = new Kinetic.Group({
@@ -21,7 +31,7 @@
 		var p = new protoPiece(group);
 		return p;
 	}
-
+	
 	tetrjs.piece = {
 		create: create
 	};

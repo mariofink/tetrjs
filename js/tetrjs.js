@@ -8,5 +8,12 @@
 	tetrjs.init = function() {
 		return init();
 	};
+	
+	tetrjs.config = {
+		board: {
+			width: 320,
+			height: 576
+		}
+	}
 
 })(window.tetrjs = window.tetrjs || {});

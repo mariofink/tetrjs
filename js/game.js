@@ -7,14 +7,13 @@
 		setupStage();
 		currentPiece = tetrjs.piece.create();
 		gameLayer.add(currentPiece.group);
-		gameLayer.draw();
 		return true;
 	}
 	function setupStage() {
 		stage = new Kinetic.Stage({
 			container: "container",
-			width: 320,
-			height: 576
+			width: tetrjs.config.board.width,
+			height: tetrjs.config.board.height
 		});
 		gameLayer = new Kinetic.Layer();
 		stage.add(createBoard());
@@ -33,8 +32,8 @@
 		var rect = new Kinetic.Rect({
 			x: 0,
 			y: 0,
-			width: 320,
-			height: 576,
+			width: tetrjs.config.board.width,
+			height: tetrjs.config.board.height,
 			fill: "#ffffff",
 			stroke: "black",
 			strokeWidth: 1
