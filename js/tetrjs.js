@@ -11,9 +11,10 @@
 	
 	tetrjs.config = {
 		board: {
-			width: 320,
-			height: 576
-		}
+			width: 10,
+			height: 18,
+			blockSize: 24
+		} 
 	}
 
 })(window.tetrjs = window.tetrjs || {});

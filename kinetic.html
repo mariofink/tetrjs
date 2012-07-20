@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8"> 
+		<title>Test tetrjs</title>
+		<script src="./js/lib/kinetic-v3.10.3.min.js"></script>
+	</head>
+	<body>
+		<div id="container"></div>
+		<script>
+			var stage = new Kinetic.Stage({
+				container: "container",
+				width: 400,
+				height: 400
+			});
+			var layer = new Kinetic.Layer();
+			stage.add(layer);
+			var rect = new Kinetic.Rect({
+				x: 50,
+				y: 50,
+				width: 200,
+				height: 200,
+				fill: "#aaaaaa",
+				stroke: "black",
+				strokeWidth: 1
+			});
+			var rect2 = new Kinetic.Rect({
+				x: 100,
+				y: 100,
+				width: 50,
+				height: 50,
+				fill: "#bada55",
+				stroke: "black",
+				strokeWidth: 1
+			});
+			var line = new Kinetic.Line({
+				points: [{x:0, y:390},{x:390, y:390}],
+				stroke: "black"
+			});
+			layer.add(rect);
+			layer.add(rect2);
+			layer.add(line);
+			layer.draw();
+		</script>
+	</body>
+</html>
