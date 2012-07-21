@@ -1,12 +1,8 @@
 (function(tetrjs) {
-	var protoPiece = function(shape) {
+	var protoPiece = function(group) {
 		_self = this;
-		this.position = {x: tetrjs.config.board.width/2, y: 0}; // start in the top middle
-		this.group = new Kinetic.Group({
-			x: this.position.x * tetrjs.config.board.blockSize, y: 0
-		});
-		this.group.add(shape);
-		
+		this.position = {x: 0, y: 0};
+		this.group = group;
 		this.move = function(direction) {
 			var newPosition = null;
 			switch (direction) {
@@ -35,13 +31,17 @@
 				console.error("direction not supported");
 				return false;
 			};
-			tetrjs.board.release(this.position);
+			this.draw(newPosition);
+		}
+		this.draw = function(newPosition) {
+			//tetrjs.board.release(this.position);
 			this.position = newPosition;
 			this.group.setPosition(this.position.x * tetrjs.config.board.blockSize, this.position.y * tetrjs.config.board.blockSize);
-			tetrjs.board.occupy(this.position);
+			//tetrjs.board.occupy(this.position);
 		}
 	};
 	function create() { 
+		var group = new Kinetic.Group();
 		var rect = new Kinetic.Rect({
 			x: 0, y: 0,
 			width: tetrjs.config.board.blockSize,
@@ -50,8 +50,9 @@
 			stroke: "#000",
 			strokeWidth: 1
 		});
-		var p = new protoPiece(rect);
-		tetrjs.board.occupy(p.position);
+		group.add(rect);
+		var p = new protoPiece(group);
+		p.draw({x: tetrjs.config.board.width/2, y: 0}); // start in the top middle
 		return p;
 	}
 	

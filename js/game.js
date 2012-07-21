@@ -2,7 +2,7 @@
 	var stage = null;
 	var gameLayer = null;
 	var blockHeap = null;
-	var currentPiece = null;
+	var currentShape = null;	
 	var paused = false;
 	
 	var KEY = { ESC: 27, SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 };
@@ -28,43 +28,46 @@
 	
 	function gameLoop(frame) {
 		if (paused === true) return;
-		if (currentPiece === null) {
-			currentPiece = tetrjs.piece.create();
-			gameLayer.add(currentPiece.group);
+		if (currentShape === null) {
+			currentShape = tetrjs.tetromino.create({x: tetrjs.config.board.width / 2, y: 0});
+			gameLayer.add(currentShape.group);
 		}
 		gameLayer.draw();
 	}
 	
 	function keydown(e) {
-		if (currentPiece !== null) {
+		if (currentShape !== null) {
 			if (e.keyCode == KEY.DOWN) {
-				currentPiece.move("down");	
+				currentShape.move("down");	
 				e.preventDefault();
 			}
 			if (e.keyCode == KEY.LEFT) {
-				currentPiece.move("left");
+				currentShape.move("left");
 				e.preventDefault();
 			}
 			if (e.keyCode == KEY.RIGHT) {
-				currentPiece.move("right");
+				currentShape.move("right");
 				e.preventDefault();
 			}
 		}
 	}
 	/**
 		Called when the piece can't be moved anymore
-		Turns shape into single blocks and adds them to the block heap
+		Adds the shape to the block heap and adjusts the matrix
 	**/
 	function blockify(piece) {
 		var blocks = piece.group.getChildren();
-		for (var i = 0, len = blocks.length; i < len; i++) {
+		for (var i = 0, len = blocks.length; i<len; i++) {
 			var block = blocks[i];
-			var p = block.getAbsolutePosition();
-			block.setPosition(p);
-			block.moveTo(blockHeap);
-			
+			var position = block.getAbsolutePosition();
+			// calculate position in the matrix
+			position.x = position.x / tetrjs.config.board.blockSize;
+			position.y = position.y / tetrjs.config.board.blockSize;
+			// occupy pieces in the matrix
+			tetrjs.board.occupy(position);
 		}
-		currentPiece = null;
+		piece.group.moveTo(blockHeap);
+		currentShape = null;
 	}
 	
 	tetrjs.game = {
