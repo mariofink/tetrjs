@@ -1,7 +1,6 @@
 (function(tetrjs) {
 
 	function init() {
-		console.log("init TetrJs");
 		return tetrjs.game.init();
 	}
 

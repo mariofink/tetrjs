@@ -9,8 +9,6 @@
 	
 	function init() {
 		setupStage();
-		currentPiece = tetrjs.piece.create();
-		gameLayer.add(currentPiece.group);
 		document.addEventListener('keydown', keydown, false);
 		return true;
 	}
@@ -23,17 +21,20 @@
 		gameLayer = new Kinetic.Layer();
 		blockHeap = new Kinetic.Group();
 		gameLayer.add(blockHeap);
-		stage.add(createBoard());
 		stage.add(gameLayer);
-		stage.onFrame(function(frame) {
-			if (paused === true) return;
-			if (currentPiece !== null) {
-				//currentPiece.move();
-			}
-			gameLayer.draw();
-		});
+		stage.onFrame(gameLoop);
 		stage.start();
 	}
+	
+	function gameLoop(frame) {
+		if (paused === true) return;
+		if (currentPiece === null) {
+			currentPiece = tetrjs.piece.create();
+			gameLayer.add(currentPiece.group);
+		}
+		gameLayer.draw();
+	}
+	
 	function keydown(e) {
 		if (currentPiece !== null) {
 			if (e.keyCode == KEY.DOWN) {
@@ -50,21 +51,6 @@
 			}
 		}
 	}
-	function createBoard() {
-		var layer = new Kinetic.Layer();
-		var rect = new Kinetic.Rect({
-			x: 0,
-			y: 0,
-			width: tetrjs.config.board.width * tetrjs.config.board.blockSize,
-			height: tetrjs.config.board.height * tetrjs.config.board.blockSize,
-			fill: "#ffffff",
-			stroke: "black",
-			strokeWidth: 1
-		});
-		layer.add(rect);
-		return layer;
-	}
-	
 	/**
 		Called when the piece can't be moved anymore
 		Turns shape into single blocks and adds them to the block heap
@@ -73,7 +59,10 @@
 		var blocks = piece.group.getChildren();
 		for (var i = 0, len = blocks.length; i < len; i++) {
 			var block = blocks[i];
+			var p = block.getAbsolutePosition();
+			block.setPosition(p);
 			block.moveTo(blockHeap);
+			
 		}
 		currentPiece = null;
 	}
