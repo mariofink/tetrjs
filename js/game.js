@@ -38,15 +38,15 @@
 	function keydown(e) {
 		if (currentPiece !== null) {
 			if (e.keyCode == KEY.DOWN) {
-				currentPiece.down();	
+				currentPiece.move("down");	
 				e.preventDefault();
 			}
 			if (e.keyCode == KEY.LEFT) {
-				currentPiece.left();	
+				currentPiece.move("left");
 				e.preventDefault();
 			}
 			if (e.keyCode == KEY.RIGHT) {
-				currentPiece.right();	
+				currentPiece.move("right");
 				e.preventDefault();
 			}
 		}
