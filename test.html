@@ -18,13 +18,14 @@
 		<div id="qunit-fixture"></div>
 		<script src="./js/lib/qunit/qunit-1.9.0.js"></script>
 		<script>
-			test( "a basic test example", function() {
-				var value = "hello";
-				equal( value, "hello", "We expect value to be hello" );
-			});
-			
 			test( "main loop" , function() {
 				equal( tetrjs.init(), true, "Main loop should return true.");
+			});
+			test("piece", function() {
+				tetrjs.board.occupy({x:0,y:0});
+				equal(tetrjs.board.getMatrix()[0][0], 1, "Occupied");
+				tetrjs.board.release({x:0,y:0});
+				equal(tetrjs.board.getMatrix()[0][0], 0, "Released");
 			});
 		</script>
 	</body>

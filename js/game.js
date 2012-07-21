@@ -1,6 +1,7 @@
 (function(tetrjs) {
 	var stage = null;
 	var gameLayer = null;
+	var blockHeap = null;
 	var currentPiece = null;
 	var paused = false;
 	
@@ -20,6 +21,8 @@
 			height: tetrjs.config.board.height * tetrjs.config.board.blockSize
 		});
 		gameLayer = new Kinetic.Layer();
+		blockHeap = new Kinetic.Group();
+		gameLayer.add(blockHeap);
 		stage.add(createBoard());
 		stage.add(gameLayer);
 		stage.onFrame(function(frame) {
@@ -62,8 +65,22 @@
 		return layer;
 	}
 	
+	/**
+		Called when the piece can't be moved anymore
+		Turns shape into single blocks and adds them to the block heap
+	**/
+	function blockify(piece) {
+		var blocks = piece.group.getChildren();
+		for (var i = 0, len = blocks.length; i < len; i++) {
+			var block = blocks[i];
+			block.moveTo(blockHeap);
+		}
+		currentPiece = null;
+	}
+	
 	tetrjs.game = {
 		init: init,
+		blockify: blockify,
 		pauseGame: function() {
 			paused = true;
 		},

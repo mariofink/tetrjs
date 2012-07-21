@@ -1,8 +1,13 @@
 (function(tetrjs) {
 	var matrix = null;
-	function createMatrix(width, height) {
+	/**
+		Create a 2d array that represents the tiles of the playing board
+	**/
+	function getMatrix() {
 		// if matrix has already been created, simply return it
 		if (matrix !== null) return matrix;
+		var width = tetrjs.config.board.width;
+		var height = tetrjs.config.board.height;		
 		matrix = [];
 		for (var i = 0; i < height; i++) {
 			var a = [];
@@ -13,9 +18,20 @@
 		}
 		return matrix;
 	}
+	function occupy(position) {
+		getMatrix()[position.y][position.x] = 1;
+	}
+	function release(position) {
+		getMatrix()[position.y][position.x] = 0;
+	}
+	function isOccupied(position) {
+		if (getMatrix()[position.y][position.x] === 1) return true;
+		return false;
+	}
 	tetrjs.board = {
-		getMatrix: function() {
-			return createMatrix(10,18);
-		}
+		getMatrix: getMatrix,
+		occupy: occupy,
+		isOccupied: isOccupied,
+		release: release
 	};
 })(window.tetrjs = window.tetrjs || {});
