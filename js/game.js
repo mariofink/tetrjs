@@ -4,6 +4,7 @@
 	var blockHeap = null;
 	var currentShape = null;	
 	var paused = false;
+	var SHAPES = ["T","L","O","I","S","Z","J"];
 	
 	var KEY = { ESC: 27, SPACE: 32, LEFT: 37, UP: 38, RIGHT: 39, DOWN: 40 };
 	
@@ -55,8 +56,8 @@
 	function gameLoop(frame) {
 		if (paused === true) return;
 		if (currentShape === null) {
-			//currentShape = new tetrjs.Tetromino({x: tetrjs.config.board.width / 2, y: 0});
-			currentShape = new tetrjs.shapes.Shape_J({x: tetrjs.config.board.width / 2, y: 0});
+			var shape = tetrjs.util.getRandomInt(0,6);
+			currentShape = new tetrjs.Tetromino(SHAPES[shape], {x: tetrjs.config.board.width / 2, y: 0});
 			gameLayer.add(currentShape.shape);
 			currentShape.draw();
 		}
@@ -88,7 +89,7 @@
 		Adds the shape to the block heap and adjusts the matrix
 	**/
 	function blockify(piece) {
-		var blocks = piece.group.getChildren();
+		var blocks = piece.shape.getChildren();
 		for (var i = 0, len = blocks.length; i<len; i++) {
 			var block = blocks[i];
 			var position = block.getAbsolutePosition();
@@ -96,7 +97,7 @@
 			position.x = parseInt(position.x / tetrjs.config.board.blockSize);
 			position.y = parseInt(position.y / tetrjs.config.board.blockSize);
 		}
-		piece.group.moveTo(blockHeap);
+		piece.shape.moveTo(blockHeap);
 		currentShape = null;
 	}
 	

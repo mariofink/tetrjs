@@ -1,11 +1,9 @@
 (function(tetrjs) {
-	var Tetromino = function(position) {
+	var Tetromino = function(shape, position) {
 		_self = this;
 		this.position = position || {x: 0, y: 0};
-		this.shape = null;
-		this.addShape = function (group) {
-			this.shape = group;
-		}
+		console.log("SHAPE",shape);
+		this.shape = new tetrjs.shapes["Shape_" + shape];
 		this.move = function(direction) {
 			var newPosition = null;
 			switch (direction) {
