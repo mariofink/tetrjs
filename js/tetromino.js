@@ -6,14 +6,12 @@
 			width: tetrjs.config.board.blockSize,
 			height: tetrjs.config.board.blockSize,
 			fill: '#bada55',
-			strokeWidth: 0,
+			strokeWidth: 1,
+			strokeColor: "black",
 			detectionType: "path"
 		});
-		rect.setOffset(12,12);
+		rect.setOffset(tetrjs.config.board.blockSize/2,tetrjs.config.board.blockSize/2);
 		this.group = new Kinetic.Group();
-		//this.group.setOffset(-12,-12);
-		this.group.setPosition(this.position.x * tetrjs.config.board.blockSize, this.position.y * tetrjs.config.board.blockSize);
-		
 		this.group.add(rect);
 		this.group.add(rect.clone({
 			x: tetrjs.config.board.blockSize, 
@@ -30,30 +28,27 @@
 			y:tetrjs.config.board.blockSize,
 			fill: getRandomColor()
 		}));
-		//this.group.setOffset([48,24]);
-		
 		this.move = function(direction) {
 			var newPosition = null;
 			switch (direction) {
 				case "left":
-					if (this.doesIntersect(-1, 0) !== false) {
+					if (this.doesIntersect(-1, 0) === false) {
 						newPosition = {x: this.position.x - 1, y: this.position.y};
 					} else {
 						return false;
 					}
 				break;
 				case "right":
-					if (this.doesIntersect(1, 0) !== false) {
+					if (this.doesIntersect(1, 0) === false) {
 						newPosition = {x: this.position.x + 1, y: this.position.y};
 					} else {
 						return false;
 					}
 				break;
 				case "down":
-					if (this.doesIntersect(0, 1) !== false) {
+					if (this.doesIntersect(0, 1) === false) {
 						newPosition = {x: this.position.x, y: this.position.y + 1};
 					} else {
-						console.log("blockify", this);
 						tetrjs.game.blockify(this);
 						return false;
 					}
@@ -70,6 +65,7 @@
 			var blocks = this.group.getChildren();
 			// check for each block if it can be moved in the desired direction
 			for (var i = 0, len = blocks.length; i < len; i++) {
+				// create a copy of each block at the future position
 				var pos = blocks[i].getAbsolutePosition();
 				var copy = blocks[i].clone();
 				copy.setAbsolutePosition(pos);
@@ -82,35 +78,11 @@
 				if (_x == -1) {
 					copy.setX(copy.getX() - tetrjs.config.board.blockSize+1);
 				}
+				// return true if intersections occur
 				var int = tetrjs.game.getBlockHeap().getIntersections(copy.getAbsolutePosition());
-				console.log(i, "pos:", copy.getAbsolutePosition());
-				if (int.length > 0) return false;
+				if (int.length > 0) return true;
 			}
-		}
-		/**
-			check if the tetromino can be moved in a specified direction
-		**/
-		this.isMovable = function (_x,_y) {
-			var blocks = this.group.getChildren();
-			// check for each block if it can be moved in the desired direction
-			for (var i = 0, len = blocks.length; i < len; i++) {
-				var block = blocks[i];
-				var position = block.getAbsolutePosition();
-				// calculate position in the matrix
-				position.x = parseInt(position.x / tetrjs.config.board.blockSize);
-				position.y = parseInt(position.y / tetrjs.config.board.blockSize);
-				var newPosition = {
-					x: position.x + _x,
-					y: position.y + _y
-				};
-				//console.log(newPosition);
-				if (newPosition.x < 0) return false;
-				if (newPosition.x >= tetrjs.config.board.width) return false;
-				if (newPosition.y < 0) return false;
-				if (newPosition.y >= tetrjs.config.board.height) return false;
-				if (tetrjs.board.isOccupied(newPosition)) return false;
-			}
-			return true;
+			return false;
 		}
 		this.rotate = function () {
 			console.warn(this.group.getAbsoluteTransform());
@@ -128,7 +100,8 @@
 			}
 		}
 		this.draw = function() {
-			this.group.setPosition(this.position.x * tetrjs.config.board.blockSize, this.position.y * tetrjs.config.board.blockSize);
+			// add half of block size according to offset
+			this.group.setPosition((this.position.x * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2, (this.position.y * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2);
 			console.info("drew group at: ", this.group.getAbsolutePosition());
 		}
 	};

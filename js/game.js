@@ -25,6 +25,7 @@
 			strokeWidth: 10
 		}));*/
 		// invisible boundaries
+		// left
 		blockHeap.add(new Kinetic.Rect({
 			x: -tetrjs.config.board.blockSize,
 			y: 0,
@@ -39,7 +40,7 @@
 			width: tetrjs.config.board.blockSize,
 			height: stage.getHeight(),
 			fill: "#00D2FF",
-			offset: [1,0]
+			offset: [0,0]
 		}));
 		blockHeap.add(new Kinetic.Rect({
 			x: 0,
