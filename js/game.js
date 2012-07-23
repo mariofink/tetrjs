@@ -10,6 +10,7 @@
 	
 	function init() {
 		setupStage();
+		window.setInterval(moveDown, 100);
 		document.addEventListener('keydown', keydown, false);
 		return true;
 	}
@@ -56,6 +57,7 @@
 	function gameLoop(frame) {
 		if (paused === true) return;
 		if (currentShape === null) {
+			// create a new random tetromino
 			var shape = tetrjs.util.getRandomInt(0,6);
 			currentShape = new tetrjs.Tetromino(SHAPES[shape], {x: tetrjs.config.board.width / 2, y: 0});
 			gameLayer.add(currentShape.shape);
@@ -63,8 +65,13 @@
 		}
 		gameLayer.draw();
 	}
-	
+	function moveDown() {
+		if (currentShape !== null) {
+			currentShape.move("down");
+		}
+	}
 	function keydown(e) {
+		if (paused === true) return;
 		if (currentShape !== null) {
 			if (e.keyCode == KEY.UP) {
 				currentShape.rotate();
@@ -89,15 +96,12 @@
 		Adds the shape to the block heap and adjusts the matrix
 	**/
 	function blockify(piece) {
-		var blocks = piece.shape.getChildren();
-		for (var i = 0, len = blocks.length; i<len; i++) {
-			var block = blocks[i];
-			var position = block.getAbsolutePosition();
-			// calculate position in the matrix
-			position.x = parseInt(position.x / tetrjs.config.board.blockSize);
-			position.y = parseInt(position.y / tetrjs.config.board.blockSize);
-		}
 		piece.shape.moveTo(blockHeap);
+		/*for (var i = 0, len = tetrjs.config.board.height; i<len; i++) {
+			for (var j = 0, len = tetrjs.config.board.weight; j<len; j++) {
+							
+			}
+		}*/
 		currentShape = null;
 	}
 	
