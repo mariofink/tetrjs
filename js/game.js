@@ -20,6 +20,35 @@
 		});
 		gameLayer = new Kinetic.Layer();
 		blockHeap = new Kinetic.Group();
+		/*blockHeap.add(new Kinetic.Line({
+			points: [0,0,stage.getWidth(),0,stage.getWidth(),stage.getHeight(), 0, stage.getHeight(), 0, 0],
+			strokeWidth: 10
+		}));*/
+		// invisible boundaries
+		blockHeap.add(new Kinetic.Rect({
+			x: -tetrjs.config.board.blockSize,
+			y: 0,
+			width: tetrjs.config.board.blockSize,
+			height: stage.getHeight(),
+			fill: "#00D2FF",
+			offset: [0,0]
+		}));
+		blockHeap.add(new Kinetic.Rect({
+			x: stage.getWidth(),
+			y: 0,
+			width: tetrjs.config.board.blockSize,
+			height: stage.getHeight(),
+			fill: "#00D2FF",
+			offset: [1,0]
+		}));
+		blockHeap.add(new Kinetic.Rect({
+			x: 0,
+			y: stage.getHeight(),
+			width: stage.getWidth(),
+			height: tetrjs.config.board.blockSize,
+			fill: "#00D2FF",
+			offset: [0,-12]
+		}));
 		gameLayer.add(blockHeap);
 		stage.add(gameLayer);
 		stage.onFrame(gameLoop);
@@ -31,12 +60,17 @@
 		if (currentShape === null) {
 			currentShape = tetrjs.tetromino.create({x: tetrjs.config.board.width / 2, y: 0});
 			gameLayer.add(currentShape.group);
+			currentShape.draw();
 		}
 		gameLayer.draw();
 	}
 	
 	function keydown(e) {
 		if (currentShape !== null) {
+			if (e.keyCode == KEY.UP) {
+				currentShape.rotate();
+				e.preventDefault();
+			}
 			if (e.keyCode == KEY.DOWN) {
 				currentShape.move("down");	
 				e.preventDefault();
@@ -61,8 +95,8 @@
 			var block = blocks[i];
 			var position = block.getAbsolutePosition();
 			// calculate position in the matrix
-			position.x = position.x / tetrjs.config.board.blockSize;
-			position.y = position.y / tetrjs.config.board.blockSize;
+			position.x = parseInt(position.x / tetrjs.config.board.blockSize);
+			position.y = parseInt(position.y / tetrjs.config.board.blockSize);
 			// occupy pieces in the matrix
 			tetrjs.board.occupy(position);
 		}
@@ -73,6 +107,12 @@
 	tetrjs.game = {
 		init: init,
 		blockify: blockify,
+		getGameLayer: function() {
+			return gameLayer;
+		},
+		getBlockHeap: function() {
+			return blockHeap;
+		},
 		pauseGame: function() {
 			paused = true;
 		},

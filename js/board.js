@@ -19,6 +19,7 @@
 		return matrix;
 	}
 	function occupy(position) {
+		console.log("occupy", position);
 		getMatrix()[position.y][position.x] = 1;
 	}
 	function release(position) {

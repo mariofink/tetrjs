@@ -25,22 +25,35 @@
 				strokeWidth: 1
 			});
 			var rect2 = new Kinetic.Rect({
-				x: 100,
-				y: 100,
+				
 				width: 50,
 				height: 50,
 				fill: "#bada55",
 				stroke: "black",
 				strokeWidth: 1
 			});
+			
 			var line = new Kinetic.Line({
 				points: [{x:0, y:390},{x:390, y:390}],
 				stroke: "black"
 			});
+			var group = new Kinetic.Group();
 			layer.add(rect);
-			layer.add(rect2);
+			group.add(rect2);
+			group.add(rect2.clone({
+				x: 50
+			}));
+			group.setPosition(100,100);
+			layer.add(group);
 			layer.add(line);
 			layer.draw();
+			
+			function forEach(f) {
+				var children = group.getChildren();
+				for (var i = 0; i < children.length; i++) {
+					console.log(children[i][f]());
+				}
+			}
 		</script>
 	</body>
 </html>
