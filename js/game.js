@@ -20,12 +20,13 @@
 		});
 		gameLayer = new Kinetic.Layer();
 		blockHeap = new Kinetic.Group();
-		/*blockHeap.add(new Kinetic.Line({
-			points: [0,0,stage.getWidth(),0,stage.getWidth(),stage.getHeight(), 0, stage.getHeight(), 0, 0],
-			strokeWidth: 10
-		}));*/
-		// invisible boundaries
-		// left
+		createBorders();
+		gameLayer.add(blockHeap);
+		stage.add(gameLayer);
+		stage.onFrame(gameLoop);
+		stage.start();
+	}
+	function createBorders() {
 		blockHeap.add(new Kinetic.Rect({
 			x: -tetrjs.config.board.blockSize,
 			y: 0,
@@ -50,17 +51,13 @@
 			fill: "#00D2FF",
 			offset: [0,-12]
 		}));
-		gameLayer.add(blockHeap);
-		stage.add(gameLayer);
-		stage.onFrame(gameLoop);
-		stage.start();
 	}
-	
 	function gameLoop(frame) {
 		if (paused === true) return;
 		if (currentShape === null) {
-			currentShape = tetrjs.tetromino.create({x: tetrjs.config.board.width / 2, y: 0});
-			gameLayer.add(currentShape.group);
+			//currentShape = new tetrjs.Tetromino({x: tetrjs.config.board.width / 2, y: 0});
+			currentShape = new tetrjs.shapes.Shape_J({x: tetrjs.config.board.width / 2, y: 0});
+			gameLayer.add(currentShape.shape);
 			currentShape.draw();
 		}
 		gameLayer.draw();
@@ -98,8 +95,6 @@
 			// calculate position in the matrix
 			position.x = parseInt(position.x / tetrjs.config.board.blockSize);
 			position.y = parseInt(position.y / tetrjs.config.board.blockSize);
-			// occupy pieces in the matrix
-			tetrjs.board.occupy(position);
 		}
 		piece.group.moveTo(blockHeap);
 		currentShape = null;

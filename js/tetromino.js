@@ -2,32 +2,10 @@
 	var Tetromino = function(position) {
 		_self = this;
 		this.position = position || {x: 0, y: 0};
-		var rect = new Kinetic.Rect({
-			width: tetrjs.config.board.blockSize,
-			height: tetrjs.config.board.blockSize,
-			fill: '#bada55',
-			strokeWidth: 1,
-			strokeColor: "black",
-			detectionType: "path"
-		});
-		rect.setOffset(tetrjs.config.board.blockSize/2,tetrjs.config.board.blockSize/2);
-		this.group = new Kinetic.Group();
-		this.group.add(rect);
-		this.group.add(rect.clone({
-			x: tetrjs.config.board.blockSize, 
-			y:0,
-			fill: getRandomColor()
-		}));
-		this.group.add(rect.clone({
-			x: tetrjs.config.board.blockSize, 
-			y:tetrjs.config.board.blockSize,
-			fill: getRandomColor()
-		}));
-		this.group.add(rect.clone({
-			x: tetrjs.config.board.blockSize*2, 
-			y:tetrjs.config.board.blockSize,
-			fill: getRandomColor()
-		}));
+		this.shape = null;
+		this.addShape = function (group) {
+			this.shape = group;
+		}
 		this.move = function(direction) {
 			var newPosition = null;
 			switch (direction) {
@@ -62,7 +40,7 @@
 			this.draw();
 		}
 		this.doesIntersect = function (_x, _y) {
-			var blocks = this.group.getChildren();
+			var blocks = this.shape.getChildren();
 			// check for each block if it can be moved in the desired direction
 			for (var i = 0, len = blocks.length; i < len; i++) {
 				// create a copy of each block at the future position
@@ -85,33 +63,16 @@
 			return false;
 		}
 		this.rotate = function () {
-			console.warn(this.group.getAbsoluteTransform());
-			var blocks = this.group.getChildren();
-			for (var i = 0, len = blocks.length; i < len; i++) {
-				var block = blocks[i];
-				var position = block.getAbsolutePosition();
-				console.log(i, "before", position);
-			}
-			this.group.rotateDeg(90);
-			for (var i = 0, len = blocks.length; i < len; i++) {
-				var block = blocks[i];
-				var position = block.getAbsolutePosition();
-				console.log(i, "after", position);
-			}
+			//this.shape.rotateDeg(90);
+			this.shape.transitionTo({
+				rotation: this.shape.getRotation() + (90 * tetrjs.util.TO_RADIANS),
+				duration: 0.1
+			});
 		}
 		this.draw = function() {
 			// add half of block size according to offset
-			this.group.setPosition((this.position.x * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2, (this.position.y * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2);
-			console.info("drew group at: ", this.group.getAbsolutePosition());
+			this.shape.setPosition((this.position.x * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2, (this.position.y * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2);
 		}
 	};
-	function create(position) {
-		return new Tetromino(position);
-	}
-	function getRandomColor() {
-		return '#'+Math.floor(Math.random()*16777215).toString(16);
-	}
-	tetrjs.tetromino = {
-		create: create
-	};
+	tetrjs.Tetromino = Tetromino;
 })(window.tetrjs = window.tetrjs || {});

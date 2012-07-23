@@ -6,9 +6,9 @@
 		<script src="./js/lib/kinetic-v3.10.3.min.js"></script>
 		<script src="./js/tetrjs.js"></script>
 		<script src="./js/tetromino.js"></script>
+		<script src="./js/shapes.js"></script>
 		<script src="./js/game.js"></script>
-		<script src="./js/board.js"></script>
-		<!--<script src="./js/piece.js"></script>-->
+		<script src="./js/util.js"></script>
 		<link rel="stylesheet" href="./js/lib/qunit/qunit-1.9.0.css">
 		<style>
 			#container canvas {
@@ -26,12 +26,6 @@
 		<script>
 			test( "main loop" , function() {
 				equal( tetrjs.init(), true, "Main loop should return true.");
-			});
-			test("piece", function() {
-				tetrjs.board.occupy({x:0,y:0});
-				equal(tetrjs.board.getMatrix()[0][0], 1, "Occupied");
-				tetrjs.board.release({x:0,y:0});
-				equal(tetrjs.board.getMatrix()[0][0], 0, "Released");
 			});
 		</script>
 	</body>
