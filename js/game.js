@@ -10,7 +10,7 @@
 	
 	function init() {
 		setupStage();
-		window.setInterval(moveDown, 100);
+		//window.setInterval(moveDown, 100);
 		document.addEventListener('keydown', keydown, false);
 		return true;
 	}
@@ -22,7 +22,9 @@
 		});
 		gameLayer = new Kinetic.Layer();
 		blockHeap = new Kinetic.Group();
+		
 		createBorders();
+		stage.add(drawGrid());
 		gameLayer.add(blockHeap);
 		stage.add(gameLayer);
 		stage.onFrame(gameLoop);
@@ -71,7 +73,15 @@
 		}
 	}
 	function keydown(e) {
-		if (paused === true) return;
+		if (paused === true) {
+			if (e.keyCode == KEY.ESC) {
+				paused = false;
+			}
+			return;
+		}
+		if (e.keyCode == KEY.ESC) {
+			paused = true;
+		}
 		if (currentShape !== null) {
 			if (e.keyCode == KEY.UP) {
 				currentShape.rotate();
@@ -97,12 +107,66 @@
 	**/
 	function blockify(piece) {
 		piece.shape.moveTo(blockHeap);
-		/*for (var i = 0, len = tetrjs.config.board.height; i<len; i++) {
-			for (var j = 0, len = tetrjs.config.board.weight; j<len; j++) {
-							
+		
+		/*
+		TODO: will have to use a 2d array as trying to use .getIntersections for each tile is not performant enough
+		
+		*/
+		
+		for (var i = 0, len = tetrjs.config.board.height; i<len; i++) {
+			for (var j = 0, len2 = tetrjs.config.board.width; j<len; j++) {
+				var x = (j * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2;
+				var y = (i * tetrjs.config.board.blockSize) + tetrjs.config.board.blockSize/2;
+				var ints = tetrjs.game.getBlockHeap().getIntersections(x,y);
+				for (var k = 0; k < ints.length; k++) {
+					//console.log("intersects", ints[k].getAbsolutePosition());
+					/*_layer.add( new Kinetic.Rect({
+						x: x,
+						y: y,
+						width: 1,
+						height: 1,
+						stroke: "red",
+						strokeWidth:1,
+						detectionType: "path"
+					}) );*/
+				}
 			}
-		}*/
+		}
 		currentShape = null;
+	}
+	
+	function drawGrid() {
+		var layer = new Kinetic.Layer();
+		for (var i = 0, len = tetrjs.config.board.height; i<len; i++) {
+			console.log("row",i);
+			for (var j = 0, len2 = tetrjs.config.board.width; j<len; j++) {
+				layer.add( new Kinetic.Rect({
+					x: j * tetrjs.config.board.blockSize,
+					y: i * tetrjs.config.board.blockSize,
+					width: tetrjs.config.board.blockSize,
+					height: tetrjs.config.board.blockSize,
+					stroke: "#ccc",
+					strokeWidth:0.25,
+					detectionType: "path"
+				}) );
+			}
+		}
+		return layer;
+	}
+	
+	var matrix = null;
+	function getMatrix(width, height) {
+		// if matrix has already been created, simply return it
+		if (matrix !== null) return matrix;
+		matrix = [];
+		for (var i = 0; i < height; i++) {
+			var a = [];
+			for (var j = 0; j < width; j++) {
+				a.push(0);
+			}
+			matrix.push(a);
+		}
+		return matrix;
 	}
 	
 	tetrjs.game = {
