@@ -10,7 +10,11 @@
 	
 	function init() {
 		setupStage();
+<<<<<<< HEAD
 		//window.setInterval(moveDown, 100);
+=======
+		window.setInterval(moveDown, 500);
+>>>>>>> Rewriting it using CoffeeScript
 		document.addEventListener('keydown', keydown, false);
 		return true;
 	}
