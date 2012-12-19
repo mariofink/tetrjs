@@ -10,7 +10,7 @@
   start: -> @running = true
   stop: -> @running = false
   reset: -> 
-    @screen = new GameScreen()
+    @screen = new GameScreen(gfx)
     #@dialog = null
     #keys.reset()
     if not @running

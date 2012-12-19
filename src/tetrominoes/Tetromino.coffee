@@ -5,12 +5,12 @@ class Tetromino
   states: []
   lastChange: utils.now()
   lastMove: utils.now()
-  blocks: []
   asciiMap: null
+  blocks: []
   
-  constructor: (@x, @y) -> # set x and y automatically
-    if @states.length > 0
-      @asciiMap = (row.split "" for row in @states[@currentState].split "\n")
+  constructor: (@x, @y, @game) -> # set x and y automatically
+    # Parse state string into a map
+    @updateBlocks()
   
   nextState: ->
     return if utils.now() - @lastChange < 200 # only change every x ms
@@ -19,18 +19,41 @@ class Tetromino
     @lastChange = utils.now()
     @currentState
   
-  prevState: ->
-    return if utils.now() - @lastChange < 200 # only change every x ms
-    @currentState--
-    @currentState = @states.length - 1 if @currentState < 0
-    @lastChange = utils.now()
-    @currentState
+  updateBlocks: ->
+    @blocks = []
+    @asciiMap = (row.split "" for row in @states[@currentState].split "\n")
+    # Loop over map and create the blocks
+    @map = for row, _y in @asciiMap
+      for col, _x in row
+        switch col
+          when "#"
+            block = 
+              x: _x + @x,
+              y: _y + @y
+            @game.levelArray[block.y][block.x] = "#"
+            @blocks.push block
+            
+  move: (x, y) -> 
+    allowed = true
+    for block in @blocks
+      if (block.x + x) == @game.levelArray[0].length or (block.x + x) < 0
+        allowed = false
+      if (block.y + y) == @game.levelArray.length 
+        allowed = false
+      if not allowed then return
+      # remove the current block positions
+      @game.levelArray[block.y][block.x] = "."
+    @x += x
+    @y += y
+    # console.log @game.levelArray
+    @updateBlocks()
   
   update: ->
+    # only update if interaction took place
+    if not (keys.right or keys.left or keys.down or keys.up) then return
+    _x = _y = 0
     @nextState() if keys.up
     #@prevState() if keys.down
-    _x = @x
-    _y = @y
     if (keys.left or keys.right or keys.down) and utils.now() - @lastMove > 200
       @lastMove = utils.now()
       if keys.left
@@ -39,23 +62,10 @@ class Tetromino
         _x += 1
       if keys.down
         _y += 1
-    moveAllowed = true
-    @map = for row, y in @asciiMap
-      for col, x in row
-        switch col
-          when "#"
-            newX = x + _x
-            newY = y + _y
-            moveAllowed = false if newX >= 10 or newX < 0 or newY >= 18
-    if moveAllowed
-      @x = _x
-      @y = _y
+    @move _x, _y
   
   render: (gfx) ->
-    # Loop over map and create the blocks
-    @map = for row, y in @asciiMap
-      for col, x in row
-        switch col
-          when "#"
-            gfx.drawBlock( (gfx.tileSize * x) + (@x * gfx.tileSize), (gfx.tileSize * y) + (@y * gfx.tileSize))
-          # draw a block for every # and add the x and y position of the tetromino
+    for block in @blocks
+      gfx.drawBlock (gfx.tileSize * block.x), (gfx.tileSize * block.y)
+      
+      
