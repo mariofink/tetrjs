@@ -20,6 +20,9 @@
       range = max - min;
       return Math.floor((Math.random() * range) + min);
     },
+    getRandomColour: function() {
+      return '#' + Math.floor(Math.random() * 16777215).toString(16);
+    },
     /*
         The counter function takes a maximum value to count to, and a speed (default is 100ms). Dividing the current time by the speed results in the number of steps that have occurred since JavaScript’s epoch: January 1, 1970. This only becomes useful when we take the modulus of those steps by the maximum value. Now we have a counter that counts to our maximum value, then resets—ad infinitum!
     */
@@ -54,6 +57,7 @@
       this.x = x;
       this.y = y;
       this.game = game;
+      this.colour = utils.getRandomColour();
       this.updateBlocks();
     }
 
@@ -97,7 +101,8 @@
                 case "#":
                   block = {
                     x: _x + this.x,
-                    y: _y + this.y
+                    y: _y + this.y,
+                    col: this.colour
                   };
                   this.game.levelArray[block.y][block.x] = "#";
                   _results1.push(this.blocks.push(block));
@@ -114,20 +119,36 @@
     };
 
     Tetromino.prototype.move = function(x, y) {
-      var allowed, block, _i, _len, _ref;
-      allowed = true;
+      var block, lockPiece, movetoX, movetoY, _i, _j, _len, _len1, _ref, _ref1;
+      lockPiece = false;
       _ref = this.blocks;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        if ((block.x + x) === this.game.levelArray[0].length || (block.x + x) < 0) {
-          allowed = false;
-        }
-        if ((block.y + y) === this.game.levelArray.length) {
-          allowed = false;
-        }
-        if (!allowed) {
+        movetoY = block.y + y;
+        movetoX = block.x + x;
+        if (movetoX === this.game.levelArray[0].length || movetoX < 0) {
           return;
         }
+        if (this.game.levelArray[block.y][movetoX] === "X") {
+          return;
+        }
+        if (movetoY === this.game.levelArray.length) {
+          lockPiece = true;
+          continue;
+        }
+        if (this.game.levelArray[movetoY][block.x] === "X") {
+          lockPiece = true;
+          continue;
+        }
+      }
+      if (lockPiece) {
+        this.game.blockify(this.blocks);
+        this.game.nextTetromino();
+        return;
+      }
+      _ref1 = this.blocks;
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        block = _ref1[_j];
         this.game.levelArray[block.y][block.x] = ".";
       }
       this.x += x;
@@ -155,8 +176,8 @@
         if (keys.down) {
           _y += 1;
         }
+        return this.move(_x, _y);
       }
-      return this.move(_x, _y);
     };
 
     Tetromino.prototype.render = function(gfx) {
@@ -165,7 +186,7 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
-        _results.push(gfx.drawBlock(gfx.tileSize * block.x, gfx.tileSize * block.y));
+        _results.push(gfx.drawBlock(gfx.tileSize * block.x, gfx.tileSize * block.y, this.colour));
       }
       return _results;
     };
@@ -178,9 +199,7 @@
 
     __extends(L, _super);
 
-    function L(x, y) {
-      this.x = x;
-      this.y = y;
+    function L() {
       this.currentState = 0;
       this.states = ["#...\n#...\n##..\n....", "..#.\n###.\n....\n....", "##..\n.#..\n.#..\n....", "###.\n#...\n....\n...."];
       L.__super__.constructor.apply(this, arguments);
@@ -197,6 +216,7 @@
     function O() {
       this.currentState = 0;
       this.states = ["##..\n##..\n....\n...."];
+      O.__super__.constructor.apply(this, arguments);
     }
 
     return O;
@@ -223,6 +243,8 @@
 
     GameScreen.prototype.levelArray = [];
 
+    GameScreen.prototype.blockHeap = [];
+
     function GameScreen(gfx) {
       var num, _i, _ref;
       for (_i = 0, _ref = gfx.dimension.y; 0 <= _ref ? _i < _ref : _i > _ref; 0 <= _ref ? _i++ : _i--) {
@@ -236,16 +258,50 @@
         })());
       }
       this.tetromino = new L(3, 0, this);
-      console.log(this.levelArray);
     }
+
+    GameScreen.prototype.nextTetromino = function() {
+      return this.tetromino = new O(3, 0, this);
+    };
+
+    GameScreen.prototype.blockify = function(blocks) {
+      var block, _i, _len, _results;
+      console.log("blockify", blocks);
+      _results = [];
+      for (_i = 0, _len = blocks.length; _i < _len; _i++) {
+        block = blocks[_i];
+        this.levelArray[block.y][block.x] = "X";
+        _results.push(this.blockHeap.push(block));
+      }
+      return _results;
+    };
+
+    GameScreen.prototype.renderBlockHeap = function() {
+      var block, _i, _len, _ref, _results;
+      _ref = this.blockHeap;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        block = _ref[_i];
+        _results.push(gfx.drawBlock(gfx.tileSize * block.x, gfx.tileSize * block.y, block.col));
+      }
+      return _results;
+    };
 
     GameScreen.prototype.update = function() {
       return this.tetromino.update();
     };
 
     GameScreen.prototype.render = function(gfx) {
+      var row, _i, _len, _ref;
       gfx.ctx.save();
+      this.renderBlockHeap();
       this.tetromino.render(gfx);
+      $("#debug").html("");
+      _ref = this.levelArray;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        $("#debug").append(row.join("") + "<br>");
+      }
       return gfx.ctx.restore();
     };
 
@@ -307,8 +363,11 @@
       this.h = canvas.height;
       return true;
     },
-    drawBlock: function(x, y) {
-      this.ctx.fillStyle = "#bada55";
+    drawBlock: function(x, y, colour) {
+      if (colour == null) {
+        colour = "#bada55";
+      }
+      this.ctx.fillStyle = colour;
       return this.ctx.fillRect(x, y, this.tileSize, this.tileSize);
     },
     clear: function() {

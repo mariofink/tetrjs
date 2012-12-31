@@ -13,8 +13,8 @@ gfx =
     @w = canvas.width
     @h = canvas.height
     true
-  drawBlock: (x, y) ->
-    @ctx.fillStyle = "#bada55";
+  drawBlock: (x, y, colour="#bada55") ->
+    @ctx.fillStyle = colour;
     @ctx.fillRect(x, y, @tileSize, @tileSize);
     
   clear: ->

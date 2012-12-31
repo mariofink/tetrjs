@@ -1,5 +1,5 @@
 class L extends Tetromino
-  constructor: (@x, @y) ->
+  constructor: ->
     @currentState = 0
     @states = [
       """

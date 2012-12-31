@@ -9,4 +9,5 @@ class O extends Tetromino
       ....
       """
     ]
+    super
 
