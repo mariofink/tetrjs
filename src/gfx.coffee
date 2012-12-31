@@ -2,7 +2,7 @@ gfx =
   tileSize: 24
   dimension: 
     x: 10
-    y: 18
+    y: 10
   init: ->
     console.log "init"
     canvas = $("#game")[0]

@@ -56,8 +56,7 @@ class Tetromino
         lockPiece = true
         continue
     if lockPiece
-      @game.blockify(@blocks)
-      @game.nextTetromino()
+      @game.nextTetromino(@)
       return
     for block in @blocks
       @game.levelArray[block.y][block.x] = "."
