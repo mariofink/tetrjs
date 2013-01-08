@@ -50,21 +50,24 @@
       _results = [];
       for (_i = 0, _len = blocks.length; _i < _len; _i++) {
         block = blocks[_i];
-        this.game.levelArray[block.y][block.x] = "X";
-        _results.push(this.heap.push(block));
+        block.blocked = true;
+        _results.push(this.game.levelArray[block.y][block.x] = block);
       }
       return _results;
     };
 
     BlockHeap.prototype.clearRow = function(rowNo) {
-      var val, x, _i, _len, _ref, _results;
-      _ref = this.game.levelArray[rowNo];
-      _results = [];
-      for (x = _i = 0, _len = _ref.length; _i < _len; x = ++_i) {
-        val = _ref[x];
-        _results.push(this.game.levelArray[rowNo][x] = ".");
-      }
-      return _results;
+      var num;
+      console.log("clearRow", this.game.levelArray);
+      this.game.levelArray.splice(rowNo, 1);
+      return this.game.levelArray.unshift((function() {
+        var _i, _ref, _results;
+        _results = [];
+        for (num = _i = 0, _ref = gfx.dimension.x; 0 <= _ref ? _i < _ref : _i > _ref; num = 0 <= _ref ? ++_i : --_i) {
+          _results.push(null);
+        }
+        return _results;
+      })());
     };
 
     BlockHeap.prototype.render = function(gfx) {
@@ -73,13 +76,36 @@
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         block = _ref[_i];
+        if (block === null) {
+          continue;
+        }
         _results.push(gfx.drawBlock(gfx.tileSize * block.x, gfx.tileSize * block.y, block.col));
       }
       return _results;
     };
 
     BlockHeap.prototype.update = function() {
-      return console.log("update");
+      var block, row, _i, _len, _ref, _results;
+      this.heap = [];
+      _ref = this.game.levelArray;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        row = _ref[_i];
+        _results.push((function() {
+          var _j, _len1, _results1;
+          _results1 = [];
+          for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
+            block = row[_j];
+            if (block && block.blocked) {
+              _results1.push(this.heap.push(block));
+            } else {
+              _results1.push(void 0);
+            }
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
     };
 
     return BlockHeap;
@@ -155,7 +181,7 @@
                     y: _y + this.y,
                     col: this.colour
                   };
-                  this.game.levelArray[block.y][block.x] = "#";
+                  this.game.levelArray[block.y][block.x] = block;
                   _results1.push(this.blocks.push(block));
                   break;
                 default:
@@ -187,7 +213,7 @@
           lockPiece = true;
           continue;
         }
-        if (this.game.levelArray[movetoY][block.x] === "X") {
+        if (this.game.levelArray[movetoY][block.x] && this.game.levelArray[movetoY][block.x].blocked) {
           lockPiece = true;
           continue;
         }
@@ -199,7 +225,7 @@
       _ref1 = this.blocks;
       for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
         block = _ref1[_j];
-        this.game.levelArray[block.y][block.x] = ".";
+        this.game.levelArray[block.y][block.x] = null;
       }
       this.x += x;
       this.y += y;
@@ -304,7 +330,7 @@
           var _j, _ref1, _results;
           _results = [];
           for (num = _j = 0, _ref1 = gfx.dimension.x; 0 <= _ref1 ? _j < _ref1 : _j > _ref1; num = 0 <= _ref1 ? ++_j : --_j) {
-            _results.push(".");
+            _results.push(null);
           }
           return _results;
         })());
@@ -328,7 +354,7 @@
         complete = true;
         for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
           col = row[_j];
-          if (col === ".") {
+          if (col === null) {
             complete = false;
           }
         }
@@ -346,21 +372,36 @@
       if (utils.now() - this.lastChange > 500) {
         this.lastChange = utils.now();
       }
-      return this.tetromino.update();
+      this.tetromino.update();
+      return this.blockHeap.update();
     };
 
     GameScreen.prototype.render = function(gfx) {
-      var row, _i, _len, _ref;
       gfx.ctx.save();
       this.blockHeap.render(gfx);
       this.tetromino.render(gfx);
+      this.showDebugInfo();
+      return gfx.ctx.restore();
+    };
+
+    GameScreen.prototype.showDebugInfo = function() {
+      var block, row, y, _i, _j, _len, _len1, _ref, _results;
       $("#debug").html("");
       _ref = this.levelArray;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        $("#debug").append(row.join("") + "<br>");
+      _results = [];
+      for (y = _i = 0, _len = _ref.length; _i < _len; y = ++_i) {
+        row = _ref[y];
+        for (_j = 0, _len1 = row.length; _j < _len1; _j++) {
+          block = row[_j];
+          if (block !== null) {
+            $("#debug").append("#");
+          } else {
+            $("#debug").append("_");
+          }
+        }
+        _results.push($("#debug").append(" -- " + y + "<br>"));
       }
-      return gfx.ctx.restore();
+      return _results;
     };
 
     return GameScreen;

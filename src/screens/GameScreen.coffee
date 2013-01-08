@@ -6,7 +6,7 @@ class GameScreen extends Screen
   constructor: (gfx) ->
     # create level array to hold tetromnio positions
     for [0...gfx.dimension.y]
-      @levelArray.push ("." for num in [0...gfx.dimension.x])
+      @levelArray.push (null for num in [0...gfx.dimension.x])
     @blockHeap = new BlockHeap(@)
     @tetromino = new L(3, 0, @)
   
@@ -19,12 +19,11 @@ class GameScreen extends Screen
     for row, y in @levelArray
       complete = true
       for col in row
-        if col == "." then complete = false
+        if col == null then complete = false
       if complete == true
         console.log "clear row #{ y }"
         @blockHeap.clearRow(y)
-        #clear row
-        
+        #clear row      
   
   update: ->
     # move current piece down by 1 in an interval
@@ -32,17 +31,27 @@ class GameScreen extends Screen
       #@tetromino.move(0,1)
       @lastChange = utils.now()
     @tetromino.update()
-    #@blockHeap.update()
+    @blockHeap.update()
       
   render: (gfx) ->
     # Render the level
     gfx.ctx.save()
     @blockHeap.render(gfx)
     @tetromino.render(gfx)
-    # Render the game
-    $("#debug").html("");
-    for row in @levelArray
-      $("#debug").append(row.join("") + "<br>");
     
+    @showDebugInfo()
+    # Render the game    
     gfx.ctx.restore()
+    
+  showDebugInfo: ->
+    $("#debug").html("");
+    for row, y in @levelArray
+      for block in row
+        if block != null 
+          $("#debug").append("#");
+        else
+          $("#debug").append("_");
+      $("#debug").append(" -- #{ y }<br>");
+    
+    
     

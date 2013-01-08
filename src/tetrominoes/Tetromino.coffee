@@ -32,7 +32,7 @@ class Tetromino
               x: _x + @x,
               y: _y + @y,
               col: @colour
-            @game.levelArray[block.y][block.x] = "#"
+            @game.levelArray[block.y][block.x] = block
             @blocks.push block
             
   move: (x, y) -> 
@@ -51,7 +51,7 @@ class Tetromino
         # moving down and hitting the bottom of the playground
         lockPiece = true
         continue
-      if (@game.levelArray[movetoY][block.x] == "X")
+      if (@game.levelArray[movetoY][block.x] && @game.levelArray[movetoY][block.x].blocked)
         # moving down and hitting a block
         lockPiece = true
         continue
@@ -59,7 +59,7 @@ class Tetromino
       @game.nextTetromino(@)
       return
     for block in @blocks
-      @game.levelArray[block.y][block.x] = "."
+      @game.levelArray[block.y][block.x] = null
     @x += x
     @y += y
     @updateBlocks()
