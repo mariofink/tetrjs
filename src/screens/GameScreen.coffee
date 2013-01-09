@@ -14,6 +14,9 @@ class GameScreen extends Screen
     #@tetromino = new T(3, 0, @)
   
   nextTetromino: (old) ->
+    if @levelArray[0][3] && @levelArray[0][3].blocked
+      console.warn "Game Over!"
+      return
     if old then @blockHeap.blockify(old.blocks)
     @checkBlocks()
     next = @shapes[utils.rand(0,6)]
@@ -27,6 +30,7 @@ class GameScreen extends Screen
       when "Z" then @tetromino = new Z(3, 0, @)
       else console.error "shape #{ next } not defined"
   
+  # check if rows are complete
   checkBlocks: ->
     for row, y in @levelArray
       complete = true

@@ -9,7 +9,7 @@ class Tetromino
   blocks: []
   
   constructor: (@x, @y, @game) -> # set x and y automatically
-    @colour = utils.getRandomColour()
+    #@colour = utils.getRandomColour()
     # Parse state string into a map
     @updateBlocks()
   

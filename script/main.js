@@ -136,7 +136,6 @@
       this.x = x;
       this.y = y;
       this.game = game;
-      this.colour = utils.getRandomColour();
       this.updateBlocks();
     }
 
@@ -325,8 +324,9 @@
     __extends(I, _super);
 
     function I() {
+      this.colour = "#AAEE22";
       this.currentState = 0;
-      this.states = ["#...\n#...\n#...\n#...", "....\n####\n....\n...."];
+      this.states = [".#..\n.#..\n.#..\n.#..", "....\n####\n....\n...."];
       I.__super__.constructor.apply(this, arguments);
     }
 
@@ -339,6 +339,7 @@
     __extends(J, _super);
 
     function J() {
+      this.colour = "#9922DD";
       this.currentState = 0;
       this.states = [".#..\n.#..\n##..\n....", "....\n###.\n..#.\n....", ".##.\n.#..\n.#..\n....", "#...\n###.\n....\n...."];
       J.__super__.constructor.apply(this, arguments);
@@ -353,6 +354,7 @@
     __extends(L, _super);
 
     function L() {
+      this.colour = "#22AAFF";
       this.currentState = 0;
       this.states = [".#..\n.#..\n.##.\n....", "..#.\n###.\n....\n....", "##..\n.#..\n.#..\n....", "....\n###.\n#...\n...."];
       L.__super__.constructor.apply(this, arguments);
@@ -367,6 +369,7 @@
     __extends(O, _super);
 
     function O() {
+      this.colour = "#DD22EE";
       this.currentState = 0;
       this.states = ["##..\n##..\n....\n...."];
       O.__super__.constructor.apply(this, arguments);
@@ -381,6 +384,7 @@
     __extends(S, _super);
 
     function S() {
+      this.colour = "#bada55";
       this.currentState = 0;
       this.states = [".#..\n.##.\n..#.\n....", ".##.\n##..\n....\n...."];
       S.__super__.constructor.apply(this, arguments);
@@ -395,6 +399,7 @@
     __extends(T, _super);
 
     function T() {
+      this.colour = "#55adab";
       this.currentState = 0;
       this.states = [".#..\n###.\n....\n....", ".#..\n##..\n.#..\n....", "....\n###.\n.#..\n....", ".#..\n.##.\n.#..\n...."];
       T.__super__.constructor.apply(this, arguments);
@@ -464,6 +469,10 @@
 
     GameScreen.prototype.nextTetromino = function(old) {
       var next;
+      if (this.levelArray[0][3] && this.levelArray[0][3].blocked) {
+        console.warn("Game Over!");
+        return;
+      }
       if (old) {
         this.blockHeap.blockify(old.blocks);
       }
