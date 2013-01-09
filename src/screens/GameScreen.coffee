@@ -40,7 +40,7 @@ class GameScreen extends Screen
   update: ->
     # move current piece down by 1 in an interval
     if utils.now() - @lastChange > 500 # only change every x ms
-      #@tetromino.move(0,1)
+      @tetromino.move(0,1)
       @lastChange = utils.now()
     @tetromino.update()
     @blockHeap.update()

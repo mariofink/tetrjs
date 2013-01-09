@@ -13,14 +13,6 @@ class Tetromino
     # Parse state string into a map
     @updateBlocks()
   
-  nextState: ->
-    return if utils.now() - @lastChange < 200 # only change every x ms
-    @currentState++
-    @currentState = 0 if @currentState > @states.length - 1
-    @lastChange = utils.now()
-    @updateBlocks()
-    @currentState
-  
   updateBlocks: ->
     # clear blocks in the level array
     for block in @blocks
@@ -38,7 +30,29 @@ class Tetromino
               col: @colour
             @game.levelArray[block.y][block.x] = block
             @blocks.push block
-            
+
+  rotate: ->
+    return if utils.now() - @lastChange < 200 # only change every x ms
+    nextState = @currentState + 1;
+    nextState = 0 if nextState > @states.length - 1
+    tempMap = (row.split "" for row in @states[nextState].split "\n")
+    allowed = true
+    # Loop over map and check if a rotation is possible
+    _map = for row, _y in tempMap
+      for col, _x in row
+        switch col
+          when "#"
+            x = _x + @x
+            y = _y + @y
+            if x > @game.levelArray[0].length - 1 or x < 0
+              allowed = false
+            if (@game.levelArray[y][x] && @game.levelArray[y][x].blocked)
+              allowed = false
+    if allowed
+      @currentState = nextState
+      @lastChange = utils.now()
+      @updateBlocks()
+                
   move: (x, y) -> 
     lockPiece = false
     # check if all blocks can be moved
@@ -48,7 +62,7 @@ class Tetromino
       if (movetoX) == @game.levelArray[0].length or (movetoX) < 0
         # moving left or right and hitting the boundaries of the playground
         return
-      if (@game.levelArray[block.y][movetoX] == "X")
+      if (@game.levelArray[block.y][movetoX] && @game.levelArray[block.y][movetoX].blocked)
         # moving left or right and hitting a block
         return
       if (movetoY) == @game.levelArray.length 
@@ -71,9 +85,8 @@ class Tetromino
     if not (keys.right or keys.left or keys.down or keys.up) then return
     _x = _y = 0
     if keys.up
-      @nextState()
-    #@prevState() if keys.down
-    if (keys.left or keys.right or keys.down) and utils.now() - @lastMove > 200
+      @rotate()
+    if (keys.left or keys.right or keys.down) and utils.now() - @lastMove > 100
       @lastMove = utils.now()
       if keys.left
         _x -= 1

@@ -140,19 +140,6 @@
       this.updateBlocks();
     }
 
-    Tetromino.prototype.nextState = function() {
-      if (utils.now() - this.lastChange < 200) {
-        return;
-      }
-      this.currentState++;
-      if (this.currentState > this.states.length - 1) {
-        this.currentState = 0;
-      }
-      this.lastChange = utils.now();
-      this.updateBlocks();
-      return this.currentState;
-    };
-
     Tetromino.prototype.updateBlocks = function() {
       var block, col, row, _i, _len, _ref, _x, _y;
       _ref = this.blocks;
@@ -203,6 +190,65 @@
       }).call(this);
     };
 
+    Tetromino.prototype.rotate = function() {
+      var allowed, col, nextState, row, tempMap, x, y, _map, _x, _y;
+      if (utils.now() - this.lastChange < 200) {
+        return;
+      }
+      nextState = this.currentState + 1;
+      if (nextState > this.states.length - 1) {
+        nextState = 0;
+      }
+      tempMap = (function() {
+        var _i, _len, _ref, _results;
+        _ref = this.states[nextState].split("\n");
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          row = _ref[_i];
+          _results.push(row.split(""));
+        }
+        return _results;
+      }).call(this);
+      allowed = true;
+      _map = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_y = _i = 0, _len = tempMap.length; _i < _len; _y = ++_i) {
+          row = tempMap[_y];
+          _results.push((function() {
+            var _j, _len1, _results1;
+            _results1 = [];
+            for (_x = _j = 0, _len1 = row.length; _j < _len1; _x = ++_j) {
+              col = row[_x];
+              switch (col) {
+                case "#":
+                  x = _x + this.x;
+                  y = _y + this.y;
+                  if (x > this.game.levelArray[0].length - 1 || x < 0) {
+                    allowed = false;
+                  }
+                  if (this.game.levelArray[y][x] && this.game.levelArray[y][x].blocked) {
+                    _results1.push(allowed = false);
+                  } else {
+                    _results1.push(void 0);
+                  }
+                  break;
+                default:
+                  _results1.push(void 0);
+              }
+            }
+            return _results1;
+          }).call(this));
+        }
+        return _results;
+      }).call(this);
+      if (allowed) {
+        this.currentState = nextState;
+        this.lastChange = utils.now();
+        return this.updateBlocks();
+      }
+    };
+
     Tetromino.prototype.move = function(x, y) {
       var block, lockPiece, movetoX, movetoY, _i, _len, _ref;
       lockPiece = false;
@@ -214,7 +260,7 @@
         if (movetoX === this.game.levelArray[0].length || movetoX < 0) {
           return;
         }
-        if (this.game.levelArray[block.y][movetoX] === "X") {
+        if (this.game.levelArray[block.y][movetoX] && this.game.levelArray[block.y][movetoX].blocked) {
           return;
         }
         if (movetoY === this.game.levelArray.length) {
@@ -242,9 +288,9 @@
       }
       _x = _y = 0;
       if (keys.up) {
-        this.nextState();
+        this.rotate();
       }
-      if ((keys.left || keys.right || keys.down) && utils.now() - this.lastMove > 200) {
+      if ((keys.left || keys.right || keys.down) && utils.now() - this.lastMove > 100) {
         this.lastMove = utils.now();
         if (keys.left) {
           _x -= 1;
@@ -468,6 +514,7 @@
 
     GameScreen.prototype.update = function() {
       if (utils.now() - this.lastChange > 500) {
+        this.tetromino.move(0, 1);
         this.lastChange = utils.now();
       }
       this.tetromino.update();
