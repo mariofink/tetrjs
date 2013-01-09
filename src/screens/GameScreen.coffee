@@ -3,17 +3,29 @@ class GameScreen extends Screen
   levelArray: []
   blockHeap: null
   lastChange: utils.now()
+  shapes: ["I","J","L","O","S","T","Z"]
+  tetromino: null
   constructor: (gfx) ->
     # create level array to hold tetromnio positions
     for [0...gfx.dimension.y]
       @levelArray.push (null for num in [0...gfx.dimension.x])
     @blockHeap = new BlockHeap(@)
-    @tetromino = new L(3, 0, @)
+    @nextTetromino()
+    #@tetromino = new T(3, 0, @)
   
   nextTetromino: (old) ->
-    @blockHeap.blockify(old.blocks)
+    if old then @blockHeap.blockify(old.blocks)
     @checkBlocks()
-    @tetromino = new O(3, 0, @)
+    next = @shapes[utils.rand(0,6)]
+    switch next
+      when "I" then @tetromino = new I(3, 0, @)
+      when "J" then @tetromino = new J(3, 0, @)
+      when "L" then @tetromino = new L(3, 0, @)
+      when "O" then @tetromino = new O(3, 0, @)
+      when "S" then @tetromino = new S(3, 0, @)
+      when "T" then @tetromino = new T(3, 0, @)
+      when "Z" then @tetromino = new Z(3, 0, @)
+      else console.error "shape #{ next } not defined"
   
   checkBlocks: ->
     for row, y in @levelArray
@@ -48,7 +60,7 @@ class GameScreen extends Screen
     for row, y in @levelArray
       for block in row
         if block != null 
-          $("#debug").append("#");
+          $("#debug").append("<span style='color:"+block.col+"'>#</span>");
         else
           $("#debug").append("_");
       $("#debug").append(" -- #{ y }<br>");

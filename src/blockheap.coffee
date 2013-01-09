@@ -24,8 +24,11 @@ class BlockHeap
       
   update: ->
     @heap = []
-    for row in @game.levelArray
-      for block in row
+    for row, y in @game.levelArray
+      for block, x in row
         if block && block.blocked
+          # set block position
+          block.x = x
+          block.y = y
           @heap.push block
     

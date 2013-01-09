@@ -18,9 +18,13 @@ class Tetromino
     @currentState++
     @currentState = 0 if @currentState > @states.length - 1
     @lastChange = utils.now()
+    @updateBlocks()
     @currentState
   
   updateBlocks: ->
+    # clear blocks in the level array
+    for block in @blocks
+      @game.levelArray[block.y][block.x] = null
     @blocks = []
     @asciiMap = (row.split "" for row in @states[@currentState].split "\n")
     # Loop over map and create the blocks
@@ -58,8 +62,6 @@ class Tetromino
     if lockPiece
       @game.nextTetromino(@)
       return
-    for block in @blocks
-      @game.levelArray[block.y][block.x] = null
     @x += x
     @y += y
     @updateBlocks()

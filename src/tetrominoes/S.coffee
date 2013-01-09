@@ -1,29 +1,17 @@
-class L extends Tetromino
+class S extends Tetromino
   constructor: ->
     @currentState = 0
     @states = [
       """
       .#..
-      .#..
       .##.
-      ....
-      """,
-      """
       ..#.
-      ###.
-      ....
       ....
       """,
       """
+      .##.
       ##..
-      .#..
-      .#..
       ....
-      """,
-      """
-      ....
-      ###.
-      #...
       ....
       """
     ]
