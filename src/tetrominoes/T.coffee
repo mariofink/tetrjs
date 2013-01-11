@@ -1,6 +1,6 @@
 class T extends Tetromino
   constructor: ->
-    @colour = "#55adab"
+    @colour = "#E97F02"
     @currentState = 0
     @states = [
       """

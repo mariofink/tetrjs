@@ -1,6 +1,6 @@
 class L extends Tetromino
   constructor: ->
-    @colour = "#22AAFF"
+    @colour = "#BD1550"
     @currentState = 0
     @states = [
       """

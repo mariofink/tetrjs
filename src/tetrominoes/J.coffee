@@ -1,6 +1,6 @@
 class J extends Tetromino
   constructor: ->
-    @colour = "#9922DD"
+    @colour = "#075B70"
     @currentState = 0
     @states = [
       """

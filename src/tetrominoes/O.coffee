@@ -1,6 +1,6 @@
 class O extends Tetromino
   constructor: ->
-    @colour = "#DD22EE"
+    @colour = "#8A9B0F"
     @currentState = 0
     @states = [
       """

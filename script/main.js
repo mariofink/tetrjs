@@ -324,7 +324,7 @@
     __extends(I, _super);
 
     function I() {
-      this.colour = "#AAEE22";
+      this.colour = "#F8CA00";
       this.currentState = 0;
       this.states = [".#..\n.#..\n.#..\n.#..", "....\n####\n....\n...."];
       I.__super__.constructor.apply(this, arguments);
@@ -339,7 +339,7 @@
     __extends(J, _super);
 
     function J() {
-      this.colour = "#9922DD";
+      this.colour = "#075B70";
       this.currentState = 0;
       this.states = [".#..\n.#..\n##..\n....", "....\n###.\n..#.\n....", ".##.\n.#..\n.#..\n....", "#...\n###.\n....\n...."];
       J.__super__.constructor.apply(this, arguments);
@@ -354,7 +354,7 @@
     __extends(L, _super);
 
     function L() {
-      this.colour = "#22AAFF";
+      this.colour = "#BD1550";
       this.currentState = 0;
       this.states = [".#..\n.#..\n.##.\n....", "..#.\n###.\n....\n....", "##..\n.#..\n.#..\n....", "....\n###.\n#...\n...."];
       L.__super__.constructor.apply(this, arguments);
@@ -369,7 +369,7 @@
     __extends(O, _super);
 
     function O() {
-      this.colour = "#DD22EE";
+      this.colour = "#8A9B0F";
       this.currentState = 0;
       this.states = ["##..\n##..\n....\n...."];
       O.__super__.constructor.apply(this, arguments);
@@ -384,7 +384,7 @@
     __extends(S, _super);
 
     function S() {
-      this.colour = "#bada55";
+      this.colour = "#490A3D";
       this.currentState = 0;
       this.states = [".#..\n.##.\n..#.\n....", ".##.\n##..\n....\n...."];
       S.__super__.constructor.apply(this, arguments);
@@ -399,7 +399,7 @@
     __extends(T, _super);
 
     function T() {
-      this.colour = "#55adab";
+      this.colour = "#E97F02";
       this.currentState = 0;
       this.states = [".#..\n###.\n....\n....", ".#..\n##..\n.#..\n....", "....\n###.\n.#..\n....", ".#..\n.##.\n.#..\n...."];
       T.__super__.constructor.apply(this, arguments);
@@ -414,6 +414,7 @@
     __extends(Z, _super);
 
     function Z() {
+      this.colour = "#0D9690";
       this.currentState = 0;
       this.states = ["..#.\n.##.\n.#..\n....", "##..\n.##.\n....\n...."];
       Z.__super__.constructor.apply(this, arguments);
